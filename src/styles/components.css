@@ -138,14 +138,31 @@
   width: 100%;
 }
 
-.wallet-provider:hover:not(.not-installed):not(:disabled) {
+.wallet-provider:hover:not(.not-installed):not(:disabled):not(.blocked) {
   border-color: var(--color-bitbasel-pink);
   background: var(--color-bitbasel-pink-light);
+  transform: translateY(-2px);
+  box-shadow: 
+    0 8px 25px rgba(255, 20, 147, 0.15),
+    0 0 0 1px rgba(255, 20, 147, 0.1);
 }
 
 .wallet-provider.not-installed {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+.wallet-provider.blocked {
+  border-color: var(--color-error);
+  background: rgba(239, 68, 68, 0.05);
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.wallet-provider.blocked:hover {
+  transform: none;
+  box-shadow: none;
+  border-color: var(--color-error);
 }
 
 .wallet-provider:disabled {

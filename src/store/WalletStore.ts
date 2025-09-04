@@ -20,9 +20,52 @@ export class WalletStore {
   constructor() {
     makeAutoObservable(this);
     this.checkExistingConnection();
+    this.setupSecurityMonitoring();
   }
 
-  // Check for existing wallet connection on app start
+  // Production security monitoring
+  private setupSecurityMonitoring() {
+    if (typeof window === 'undefined') return;
+    
+    // Monitor wallet extension changes
+    let walletCheckInterval: NodeJS.Timeout;
+    
+    const checkWalletSecurity = () => {
+      if (this.walletInfo && this.isConnected) {
+        this.validateWalletState().then(isValid => {
+          if (!isValid) {
+            console.warn('Security: Wallet state validation failed');
+          }
+        }).catch(error => {
+          console.error('Security monitoring error:', error);
+        });
+      }
+    };
+    
+    // Check wallet state every 30 seconds
+    walletCheckInterval = setInterval(checkWalletSecurity, 30000);
+    
+    // Clear interval on page unload
+    window.addEventListener('beforeunload', () => {
+      if (walletCheckInterval) {
+        clearInterval(walletCheckInterval);
+      }
+    });
+    
+    // Listen for account changes in supported wallets
+    if ((window as any).unisat) {
+      (window as any).unisat.on('accountsChanged', (accounts: string[]) => {
+        if (this.walletInfo && this.walletInfo.provider === 'unisat') {
+          if (accounts.length === 0 || accounts[0] !== this.walletInfo.address) {
+            console.warn('Security: Account changed detected');
+            this.disconnectWallet();
+          }
+        }
+      });
+    }
+  }
+
+  // Check for existing wallet connection on app start - SECURITY ENHANCED
   private async checkExistingConnection() {
     try {
       // Only run in browser environment
@@ -30,16 +73,70 @@ export class WalletStore {
       
       const savedWallet = localStorage.getItem('bitbasel_wallet');
       if (savedWallet) {
-        const { provider } = JSON.parse(savedWallet);
+        // Validate stored data structure
+        const parsed = JSON.parse(savedWallet);
+        if (!this.isValidStoredWallet(parsed)) {
+          localStorage.removeItem('bitbasel_wallet');
+          return;
+        }
+        
+        const { provider, address, timestamp } = parsed;
+        
+        // Check if connection is expired (24 hours)
+        const now = Date.now();
+        const connectionAge = now - (timestamp || 0);
+        const MAX_CONNECTION_AGE = 24 * 60 * 60 * 1000; // 24 hours
+        
+        if (connectionAge > MAX_CONNECTION_AGE) {
+          localStorage.removeItem('bitbasel_wallet');
+          return;
+        }
+        
         await this.connectWallet(provider, false);
       }
     } catch (error) {
       console.error('Error checking existing connection:', error);
+      // Clear potentially corrupted data
+      localStorage.removeItem('bitbasel_wallet');
     }
   }
 
-  // Connect to wallet
+  // Validate stored wallet data structure - SECURITY
+  private isValidStoredWallet(data: any): boolean {
+    return (
+      data && 
+      typeof data === 'object' &&
+      typeof data.provider === 'string' &&
+      this.availableProviders.includes(data.provider as WalletProvider) &&
+      typeof data.address === 'string' &&
+      data.address.length > 0 &&
+      (!data.timestamp || typeof data.timestamp === 'number')
+    );
+  }
+
+  // Validate wallet info response - SECURITY
+  private isValidWalletInfo(walletInfo: any): boolean {
+    return (
+      walletInfo &&
+      typeof walletInfo === 'object' &&
+      typeof walletInfo.address === 'string' &&
+      walletInfo.address.length > 0 &&
+      typeof walletInfo.publicKey === 'string' &&
+      typeof walletInfo.balance === 'number' &&
+      walletInfo.balance >= 0 &&
+      ['mainnet', 'testnet'].includes(walletInfo.network) &&
+      typeof walletInfo.connected === 'boolean' &&
+      this.availableProviders.includes(walletInfo.provider)
+    );
+  }
+
+  // Connect to wallet - SECURITY ENHANCED
   async connectWallet(provider: WalletProvider, saveConnection = true) {
+    // Validate provider input
+    if (!this.availableProviders.includes(provider)) {
+      throw new Error(`Invalid wallet provider: ${provider}`);
+    }
+
     this.connecting = true;
     this.error = null;
 
@@ -66,30 +163,34 @@ export class WalletStore {
           throw new Error(`Unsupported wallet provider: ${provider}`);
       }
 
+      // Validate wallet response
+      if (!this.isValidWalletInfo(walletInfo)) {
+        throw new Error('Invalid wallet response received');
+      }
+
       runInAction(() => {
         this.walletInfo = walletInfo;
         this.connecting = false;
       });
 
       if (saveConnection) {
-        localStorage.setItem(
-          'bitbasel_wallet',
-          JSON.stringify({
-            provider,
-            address: walletInfo.address,
-          })
-        );
+        // Enhanced secure storage with timestamp
+        const secureWalletData = {
+          provider,
+          address: walletInfo.address,
+          timestamp: Date.now(),
+          version: '1.0' // For future compatibility
+        };
+        
+        localStorage.setItem('bitbasel_wallet', JSON.stringify(secureWalletData));
       }
 
-      // Fetch balance after connection
+      // Fetch balance after connection with retry mechanism
       setTimeout(() => this.updateBalance(), 1000);
 
       return walletInfo;
     } catch (error) {
-      runInAction(() => {
-        this.error = error instanceof Error ? error.message : 'Failed to connect wallet';
-        this.connecting = false;
-      });
+      await this.handleConnectionError(error, provider);
       throw error;
     }
   }
@@ -270,49 +371,157 @@ export class WalletStore {
     }
   }
 
-  // Update wallet balance
-  async updateBalance() {
-    if (!this.walletInfo) return;
-
+  // Advanced wallet state validation with retry mechanism
+  private async validateWalletState(): Promise<boolean> {
+    if (!this.walletInfo) return false;
+    
     try {
-      let newBalance = 0;
+      const { provider } = this.walletInfo;
+      let isValid = false;
       
-      switch (this.walletInfo.provider) {
+      switch (provider) {
         case 'unisat':
           if ((window as any).unisat) {
-            const balance = await (window as any).unisat.getBalance();
-            newBalance = balance.confirmed;
+            const accounts = await (window as any).unisat.getAccounts();
+            isValid = accounts.length > 0 && accounts[0] === this.walletInfo.address;
           }
           break;
         case 'xverse':
           if ((window as any).BitcoinProvider) {
-            const response = await (window as any).BitcoinProvider.getBalance();
-            newBalance = response.confirmed || 0;
+            const response = await (window as any).BitcoinProvider.getAddresses();
+            isValid = response.result?.addresses?.[0]?.address === this.walletInfo.address;
           }
-          break;
-        case 'ordinals-wallet':
-          if ((window as any).ordinalsWallet) {
-            const balance = await (window as any).ordinalsWallet.getBalance();
-            newBalance = balance.confirmed || balance.total || 0;
-          }
-          break;
-        case 'leather':
-        case 'phantom':
-          // These wallets may require different balance fetching approaches
-          // For now, keep existing balance
           break;
         default:
-          break;
+          isValid = true; // Assume valid for other providers
       }
-
-      runInAction(() => {
-        if (this.walletInfo && newBalance > 0) {
-          this.walletInfo.balance = newBalance;
-        }
-      });
+      
+      if (!isValid) {
+        console.warn('Wallet state validation failed, disconnecting...');
+        await this.disconnectWallet();
+      }
+      
+      return isValid;
     } catch (error) {
-      console.error('Error updating balance:', error);
+      console.error('Wallet state validation error:', error);
+      return false;
     }
+  }
+
+  // Update wallet balance with enhanced error handling
+  async updateBalance() {
+    if (!this.walletInfo) return;
+    
+    const isValidState = await this.validateWalletState();
+    if (!isValidState) return;
+
+    const MAX_RETRIES = 3;
+    let attempt = 0;
+    
+    while (attempt < MAX_RETRIES) {
+      try {
+        let newBalance = 0;
+        
+        switch (this.walletInfo.provider) {
+          case 'unisat':
+            if ((window as any).unisat) {
+              const balance = await (window as any).unisat.getBalance();
+              newBalance = balance.confirmed;
+            }
+            break;
+          case 'xverse':
+            if ((window as any).BitcoinProvider) {
+              const response = await (window as any).BitcoinProvider.getBalance();
+              newBalance = response.confirmed || 0;
+            }
+            break;
+          case 'ordinals-wallet':
+            if ((window as any).ordinalsWallet) {
+              const balance = await (window as any).ordinalsWallet.getBalance();
+              newBalance = balance.confirmed || balance.total || 0;
+            }
+            break;
+          case 'leather':
+          case 'phantom':
+            // These wallets may require different balance fetching approaches
+            // For now, keep existing balance
+            break;
+          default:
+            break;
+        }
+
+        runInAction(() => {
+          if (this.walletInfo && newBalance >= 0) {
+            this.walletInfo.balance = newBalance;
+          }
+        });
+        
+        return; // Success, exit retry loop
+      } catch (error) {
+        attempt++;
+        console.error(`Balance update attempt ${attempt} failed:`, error);
+        
+        if (attempt < MAX_RETRIES) {
+          await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
+        } else {
+          console.error('Failed to update balance after', MAX_RETRIES, 'attempts');
+        }
+      }
+    }
+  }
+
+  // Connection recovery mechanism
+  async recoverConnection(): Promise<boolean> {
+    if (!this.walletInfo) return false;
+    
+    try {
+      const { provider } = this.walletInfo;
+      const isValid = await this.validateWalletState();
+      
+      if (!isValid) {
+        // Attempt to reconnect with same provider
+        try {
+          await this.connectWallet(provider, false);
+          return true;
+        } catch (error) {
+          console.error('Connection recovery failed:', error);
+          await this.disconnectWallet();
+          return false;
+        }
+      }
+      
+      return true;
+    } catch (error) {
+      console.error('Connection recovery error:', error);
+      return false;
+    }
+  }
+
+  // Enhanced error handling with auto-recovery
+  async handleConnectionError(error: any, provider: WalletProvider): Promise<void> {
+    let errorMessage = 'Connection failed';
+    
+    if (error?.message?.includes('User rejected')) {
+      errorMessage = 'Connection was cancelled by user';
+    } else if (error?.message?.includes('not found')) {
+      errorMessage = `${provider} wallet not found. Please install the extension.`;
+    } else if (error?.message?.includes('network')) {
+      errorMessage = 'Network error. Please check your connection.';
+    } else if (error instanceof Error) {
+      errorMessage = error.message;
+    }
+    
+    runInAction(() => {
+      this.error = errorMessage;
+      this.connecting = false;
+    });
+    
+    // Auto-clear error after 5 seconds
+    setTimeout(() => {
+      if (this.error === errorMessage) {
+        this.clearError();
+      }
+    }, 5000);
   }
 
   // Clear error

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { observer } from 'mobx-react-lite';
 import { useWalletStore } from '@/store/StoreProvider';
 import { WalletProvider } from '@/types/wallet';
@@ -46,16 +46,39 @@ interface WalletConnectProps {
 const WalletConnect: React.FC<WalletConnectProps> = observer(({ onClose, showModal = false }) => {
   const walletStore = useWalletStore();
   const [connecting, setConnecting] = useState<string | null>(null);
+  const [securityChecked, setSecurityChecked] = useState(false);
+  const [connectionAttempts, setConnectionAttempts] = useState<Record<string, number>>({});
+
+  const validateConnection = useCallback((provider: WalletProvider): boolean => {
+    if (typeof window === 'undefined') return false;
+    
+    const attempts = connectionAttempts[provider] || 0;
+    if (attempts >= 3) {
+      walletStore.error = `Too many connection attempts for ${provider}. Please refresh and try again.`;
+      return false;
+    }
+    
+    return true;
+  }, [connectionAttempts, walletStore]);
 
   const handleConnect = async (provider: WalletProvider) => {
+    if (!validateConnection(provider)) return;
+    
     setConnecting(provider);
+    setConnectionAttempts(prev => ({
+      ...prev,
+      [provider]: (prev[provider] || 0) + 1
+    }));
+
     try {
       await walletStore.connectWallet(provider);
+      setConnectionAttempts(prev => ({ ...prev, [provider]: 0 }));
       onClose?.();
     } catch (error) {
       console.error('Failed to connect:', error);
+      setTimeout(() => setConnecting(null), 1000);
     } finally {
-      setConnecting(null);
+      setTimeout(() => setConnecting(null), 500);
     }
   };
 
@@ -107,19 +130,26 @@ const WalletConnect: React.FC<WalletConnectProps> = observer(({ onClose, showMod
           {WALLET_PROVIDERS.map((provider) => {
             const isInstalled = provider.installed ? provider.installed() : true;
             const isConnecting = connecting === provider.id;
+            const attempts = connectionAttempts[provider.id] || 0;
+            const isBlocked = attempts >= 3;
 
             return (
               <button
                 key={provider.id}
-                className={`wallet-provider ${!isInstalled ? 'not-installed' : ''}`}
-                onClick={() => isInstalled && handleConnect(provider.id)}
-                disabled={!isInstalled || !!connecting}
+                className={`wallet-provider ${!isInstalled ? 'not-installed' : ''} ${isBlocked ? 'blocked' : ''}`}
+                onClick={() => isInstalled && !isBlocked && handleConnect(provider.id)}
+                disabled={!isInstalled || !!connecting || isBlocked}
               >
                 <div className="provider-icon">{provider.icon}</div>
                 <div className="provider-info">
                   <div className="provider-name">{provider.name}</div>
                   <div className="provider-description">
-                    {!isInstalled ? 'Not installed' : `${provider.name} wallet`}
+                    {isBlocked 
+                      ? 'Connection blocked - refresh to retry'
+                      : !isInstalled 
+                        ? 'Not installed' 
+                        : `${provider.name} wallet ${attempts > 0 ? `(${attempts}/3 attempts)` : ''}`
+                    }
                   </div>
                 </div>
                 {isConnecting && <div className="connecting-spinner">⟳</div>}
