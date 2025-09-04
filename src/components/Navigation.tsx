@@ -22,13 +22,13 @@ export const Navigation: React.FC = observer(() => {
           {/* Desktop Navigation */}
           <div className="nav-links desktop-nav">
             <Link href="/collections" className="nav-link">
-              Collections
+              Exhibitions
             </Link>
             <Link href="/galleries" className="nav-link">
-              Galleries
+              Artists
             </Link>
             <Link href="/marketplace" className="nav-link">
-              Marketplace
+              Gallery
             </Link>
             <Link href="/about" className="nav-link">
               About
@@ -60,13 +60,13 @@ export const Navigation: React.FC = observer(() => {
         {mobileMenuOpen && (
           <div className="mobile-nav">
             <Link href="/collections" className="nav-link mobile-link">
-              Collections
+              Exhibitions
             </Link>
             <Link href="/galleries" className="nav-link mobile-link">
-              Galleries
+              Artists
             </Link>
             <Link href="/marketplace" className="nav-link mobile-link">
-              Marketplace
+              Gallery
             </Link>
             <Link href="/about" className="nav-link mobile-link">
               About

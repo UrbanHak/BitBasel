@@ -24,47 +24,14 @@ const HomePage: React.FC = observer(() => {
         {/* Hero Section */}
         <section className="hero">
           <div className="container">
-            <div className="hero-content">
-              <h1 className="hero-title">
-                Your City's
-                <br />
-                <span className="hero-highlight">CryptoArt Community</span>
-              </h1>
-              <p className="hero-description">
-                Discover, collect, and trade Bitcoin Ordinal inscriptions on the blockchain. Join
-                Miami's premier marketplace for digital art that lives forever on Bitcoin.
-              </p>
-              <div className="hero-actions">
-                <button className="btn-primary hero-btn">Explore Ordinals</button>
-                <button className="btn-outline hero-btn">Learn More</button>
-              </div>
-
-              {/* Market Stats */}
-              {marketplaceStore.stats && (
-                <div className="hero-stats">
-                  <div className="stat-card">
-                    <div className="stat-value">
-                      {marketplaceStore.stats.totalItems.toLocaleString()}
-                    </div>
-                    <div className="stat-label">Inscriptions</div>
-                  </div>
-                  <div className="stat-card">
-                    <div className="stat-value">
-                      {marketplaceStore.stats.totalVolume.toFixed(1)}
-                    </div>
-                    <div className="stat-label">BTC Volume</div>
-                  </div>
-                  <div className="stat-card">
-                    <div className="stat-value">{marketplaceStore.stats.totalCollections}</div>
-                    <div className="stat-label">Collections</div>
-                  </div>
-                  <div className="stat-card">
-                    <div className="stat-value">{marketplaceStore.stats.activeListings}</div>
-                    <div className="stat-label">Listed</div>
-                  </div>
-                </div>
-              )}
-            </div>
+            <h1 className="hero-title">
+              BitBasel
+              <span className="hero-highlight">Your City's Crypto Art Community Hub</span>
+            </h1>
+            <p className="hero-description">
+              Phenomenal marketplace combining Bitcoin Ordinals with smart contracts & dynamic NFTs
+            </p>
+            <button className="btn-primary hero-btn">View Gallery</button>
           </div>
         </section>
 
@@ -72,14 +39,14 @@ const HomePage: React.FC = observer(() => {
         <section className="featured-section">
           <div className="container">
             <div className="section-header">
-              <h2 className="text-heading-2">Featured Collections</h2>
+              <h2 className="text-heading-2">Dynamic Collections</h2>
               <p className="section-subtitle">
-                Curated collections from verified artists and creators
+                Smart contract-powered exhibitions featuring Bitcoin Ordinals and evolving NFT masterpieces
               </p>
             </div>
             <MarketplaceGrid type="collections" featured={true} />
             <div className="section-footer">
-              <button className="btn-outline">View All Collections</button>
+              <button className="btn-outline">Browse All Exhibitions</button>
             </div>
           </div>
         </section>
@@ -88,14 +55,14 @@ const HomePage: React.FC = observer(() => {
         <section className="latest-section">
           <div className="container">
             <div className="section-header">
-              <h2 className="text-heading-2">Latest Inscriptions</h2>
+              <h2 className="text-heading-2">Live Ordinals</h2>
               <p className="section-subtitle">
-                Recently minted Bitcoin Ordinals ready for collection
+                Latest Bitcoin inscriptions with smart contract integration and community curation
               </p>
             </div>
             <MarketplaceGrid type="ordinals" featured={true} />
             <div className="section-footer">
-              <button className="btn-outline">Explore Marketplace</button>
+              <button className="btn-outline">Browse Gallery</button>
             </div>
           </div>
         </section>
@@ -104,8 +71,8 @@ const HomePage: React.FC = observer(() => {
         <section className="newsletter-section">
           <div className="container">
             <div className="newsletter-content">
-              <h2 className="text-heading-2">Stay Updated</h2>
-              <p>Get the latest news on Bitcoin Ordinals, featured drops, and community events.</p>
+              <h2 className="text-heading-2">Community Hub</h2>
+              <p>Join your city's crypto art movement - get updates on dynamic NFT drops, smart contract launches & Ordinals events.</p>
               <form className="newsletter-form">
                 <input
                   type="email"

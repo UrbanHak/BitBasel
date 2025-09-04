@@ -65,8 +65,8 @@ body {
 
 /* Color Variables - BitBasel Art Gallery Theme */
 :root {
-  --color-primary: #000000;
-  --color-secondary: #1a1a1a;
+  --color-primary: #ff1493; /* BitBasel pink */
+  --color-secondary: #ff69b4; /* Lighter pink */
   --color-accent: #ff1493; /* BitBasel pink */
   --color-background: #000000;
   --color-surface: #0a0a0a;
@@ -78,10 +78,14 @@ body {
   --color-warning: #f59e0b;
   --color-error: #ef4444;
 
-  /* BitBasel brand colors */
+  /* BitBasel Gallery brand colors */
   --color-bitbasel-pink: #ff1493;
   --color-bitbasel-pink-soft: #ff69b4;
   --color-bitbasel-pink-light: rgba(255, 20, 147, 0.1);
+  --color-bitbasel-pink-gradient: linear-gradient(135deg, #ff1493, #ff69b4);
+  --color-bitbasel-pink-glow: rgba(255, 20, 147, 0.3);
+  --color-gallery-gold: #d4af37;
+  --color-gallery-cream: #faf7f2;
   
   /* Bitcoin/Crypto specific colors */
   --color-bitcoin: #f7931a;
@@ -104,7 +108,7 @@ body {
   
   /* Gradients */
   --gradient-primary: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
-  --gradient-accent: linear-gradient(135deg, #ff1493 0%, #ff0080 100%);
+  --gradient-accent: linear-gradient(135deg, #ff1493 0%, #ff69b4 50%, #ff0080 100%);
   --gradient-surface: linear-gradient(135deg, #0a0a0a 0%, #0f0f0f 100%);
   --gradient-gallery: linear-gradient(180deg, #000000 0%, #0a0a0a 50%, #000000 100%);
 }

@@ -4,11 +4,11 @@ import '@/styles/globals.css';
 import '@/styles/components.css';
 
 export const metadata: Metadata = {
-  title: "BitBasel - Your City's CryptoArt Community",
+  title: "BitBasel - Your City's Crypto Art Community Hub",
   description:
-    'Discover, collect, and trade Bitcoin Ordinal inscriptions on the premier marketplace for digital art on the Bitcoin blockchain.',
-  keywords: 'Bitcoin, Ordinals, NFT, Digital Art, Cryptocurrency, Blockchain, Miami',
-  authors: [{ name: 'BitBasel Team' }],
+    'Phenomenal marketplace combining Bitcoin Ordinals with smart contracts and dynamic NFTs. Join your city\'s crypto art community with curated exhibitions and evolving digital masterpieces.',
+  keywords: 'Bitcoin Ordinals, Smart Contracts, Dynamic NFTs, Crypto Art Community, Digital Gallery, Blockchain Art, Community Hub, Art Basel',
+  authors: [{ name: 'BitBasel Gallery' }],
   creator: 'BitBasel',
   publisher: 'BitBasel',
   formatDetection: {
@@ -24,9 +24,9 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'en_US',
     url: '/',
-    title: "BitBasel - Your City's CryptoArt Community",
+    title: "BitBasel - Your City's Crypto Art Community Hub",
     description:
-      'Discover, collect, and trade Bitcoin Ordinal inscriptions on the premier marketplace for digital art on the Bitcoin blockchain.',
+      'Phenomenal marketplace combining Bitcoin Ordinals with smart contracts and dynamic NFTs. Join your city\'s crypto art community with curated exhibitions and evolving digital masterpieces.',
     siteName: 'BitBasel',
     images: [
       {
@@ -39,9 +39,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: "BitBasel - Your City's CryptoArt Community",
+    title: "BitBasel - Your City's Crypto Art Community Hub",
     description:
-      'Discover, collect, and trade Bitcoin Ordinal inscriptions on the premier marketplace for digital art on the Bitcoin blockchain.',
+      'Phenomenal marketplace combining Bitcoin Ordinals with smart contracts and dynamic NFTs. Join your city\'s crypto art community with curated exhibitions and evolving digital masterpieces.',
     creator: '@bitbasel',
     images: ['/images/twitter-image.png'],
   },

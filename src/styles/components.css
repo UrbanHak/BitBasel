@@ -494,16 +494,55 @@
   color: var(--color-text-secondary);
 }
 
-/* Marketplace Grid */
+/* Gallery Sections */
 .marketplace-section {
+  margin: 4rem 0;
+}
+
+.featured-section, 
+.latest-section, 
+.newsletter-section {
+  padding: 4rem 0;
   margin: 2rem 0;
+}
+
+.featured-section {
+  background: linear-gradient(180deg, transparent 0%, rgba(255, 20, 147, 0.02) 50%, transparent 100%);
+  border-top: 1px solid rgba(255, 20, 147, 0.1);
+  border-bottom: 1px solid rgba(255, 20, 147, 0.1);
+}
+
+.newsletter-section {
+  background: radial-gradient(ellipse at center, rgba(255, 20, 147, 0.05) 0%, transparent 70%);
 }
 
 .section-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1.5rem;
+  margin-bottom: 3rem;
+  text-align: center;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.section-header h2 {
+  font-family: 'Machina', sans-serif;
+  font-weight: 300;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  position: relative;
+}
+
+.section-header h2::after {
+  content: '';
+  position: absolute;
+  bottom: -0.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 1px;
+  background: var(--color-bitbasel-pink);
 }
 
 .section-stats {
@@ -745,60 +784,22 @@
 
 /* Homepage Styles - Gallery Aesthetic */
 .hero {
-  background: var(--gradient-gallery);
-  background-image: 
-    radial-gradient(circle at 30% 40%, var(--color-bitbasel-pink-light) 0%, transparent 50%),
-    radial-gradient(circle at 70% 60%, rgba(255, 255, 255, 0.02) 0%, transparent 40%);
+  background: var(--color-background);
   padding: 8rem 0;
-  min-height: 90vh;
+  min-height: 70vh;
   display: flex;
   align-items: center;
-  position: relative;
-  overflow: hidden;
-}
-
-.hero::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-image: 
-    linear-gradient(90deg, transparent 0%, var(--color-bitbasel-pink-light) 1px, transparent 1px),
-    linear-gradient(0deg, transparent 0%, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-  background-size: 80px 80px;
-  opacity: 0.3;
-  pointer-events: none;
-}
-
-.hero::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 120%;
-  height: 120%;
-  background: radial-gradient(circle, transparent 30%, var(--color-background) 70%);
-  pointer-events: none;
-}
-
-.hero-content {
   text-align: center;
-  max-width: 900px;
-  margin: 0 auto;
-  position: relative;
-  z-index: 2;
 }
+
+
 
 .hero-title {
-  font-size: 4.5rem;
+  font-size: 4rem;
   font-weight: 700;
-  margin-bottom: 2rem;
-  line-height: 1.1;
-  color: var(--color-gallery-white);
-  letter-spacing: -0.02em;
+  margin-bottom: 1.5rem;
+  line-height: 1.2;
+  color: var(--color-text-primary);
 }
 
 .hero-highlight {
@@ -823,13 +824,10 @@
 }
 
 .hero-description {
-  font-size: 1.25rem;
+  font-size: 1.2rem;
   color: var(--color-text-secondary);
-  margin-bottom: 2.5rem;
-  line-height: 1.6;
-  max-width: 600px;
-  margin-left: auto;
-  margin-right: auto;
+  margin-bottom: 2rem;
+  opacity: 0.8;
 }
 
 .hero-actions {
@@ -893,8 +891,15 @@
 
 .section-subtitle {
   color: var(--color-text-secondary);
-  margin-bottom: 2rem;
+  margin-bottom: 3rem;
   text-align: center;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  font-weight: 300;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  opacity: 0.9;
 }
 
 .section-footer {
