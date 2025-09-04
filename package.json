@@ -1,0 +1,51 @@
+{
+  "name": "bitbasel",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Frontend NextJS application for BitBasel - Your City's CryptoArt Community",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "lint:fix": "next lint --fix",
+    "prettier": "prettier --write \"**/*.{js,jsx,ts,tsx,json,css,md}\"",
+    "prettier:check": "prettier --check \"**/*.{js,jsx,ts,tsx,json,css,md}\"",
+    "type-check": "tsc --noEmit",
+    "prepare": "husky install"
+  },
+  "dependencies": {
+    "next": "^14.2.32",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "mobx": "^6.12.0",
+    "mobx-react-lite": "^4.0.5",
+    "antd": "^5.12.8",
+    "axios": "^1.6.2"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.5",
+    "@types/react": "^18.2.45",
+    "@types/react-dom": "^18.2.18",
+    "typescript": "^5.3.3",
+    "eslint": "^8.56.0",
+    "eslint-config-next": "14.0.4",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.1.2",
+    "prettier": "^3.1.1",
+    "husky": "^8.0.3",
+    "lint-staged": "^15.2.0"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,css,md}": [
+      "prettier --write"
+    ]
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

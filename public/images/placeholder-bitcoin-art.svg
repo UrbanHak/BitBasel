@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400">
+  <defs>
+    <!-- Bitcoin Orange Gradient -->
+    <linearGradient id="bitcoinGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f7931a;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ffb347;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Background Gradient -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a1a1a;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#000000;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Glow Effect -->
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:rgba(247, 147, 26, 0.4);stop-opacity:1" />
+      <stop offset="100%" style="stop-color:rgba(247, 147, 26, 0);stop-opacity:0" />
+    </radialGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="400" height="400" fill="url(#bgGrad)"/>
+  <rect width="400" height="400" fill="url(#glow)"/>
+  
+  <!-- Abstract Bitcoin Pattern -->
+  <g transform="translate(200,200)">
+    <!-- Outer Ring -->
+    <circle cx="0" cy="0" r="120" fill="none" stroke="url(#bitcoinGrad)" stroke-width="3" opacity="0.6"/>
+    
+    <!-- Inner Circles -->
+    <circle cx="0" cy="0" r="80" fill="none" stroke="url(#bitcoinGrad)" stroke-width="2" opacity="0.4"/>
+    <circle cx="0" cy="0" r="40" fill="none" stroke="url(#bitcoinGrad)" stroke-width="2" opacity="0.4"/>
+    
+    <!-- Bitcoin B Symbol -->
+    <path d="M-20,-40 L-20,40 L0,40 C15,40 25,30 25,20 C25,10 20,5 15,5 C20,5 25,-10 25,-20 C25,-30 15,-40 0,-40 Z
+             M-10,-30 L-10,-10 L5,-10 C10,-10 15,-15 15,-20 C15,-25 10,-30 5,-30 Z
+             M-10,10 L-10,30 L5,30 C12,30 15,25 15,20 C15,15 12,10 5,10 Z" 
+          fill="url(#bitcoinGrad)" opacity="0.9"/>
+    
+    <!-- Decorative Elements -->
+    <g opacity="0.3">
+      <line x1="-100" y1="0" x2="-70" y2="0" stroke="url(#bitcoinGrad)" stroke-width="2"/>
+      <line x1="70" y1="0" x2="100" y2="0" stroke="url(#bitcoinGrad)" stroke-width="2"/>
+      <line x1="0" y1="-100" x2="0" y2="-70" stroke="url(#bitcoinGrad)" stroke-width="2"/>
+      <line x1="0" y1="70" x2="0" y2="100" stroke="url(#bitcoinGrad)" stroke-width="2"/>
+      
+      <!-- Diagonal Lines -->
+      <line x1="-70" y1="-70" x2="-50" y2="-50" stroke="url(#bitcoinGrad)" stroke-width="1.5"/>
+      <line x1="50" y1="50" x2="70" y2="70" stroke="url(#bitcoinGrad)" stroke-width="1.5"/>
+      <line x1="70" y1="-70" x2="50" y2="-50" stroke="url(#bitcoinGrad)" stroke-width="1.5"/>
+      <line x1="-50" y1="50" x2="-70" y2="70" stroke="url(#bitcoinGrad)" stroke-width="1.5"/>
+    </g>
+  </g>
+  
+  <!-- Art Label -->
+  <rect x="150" y="350" width="100" height="25" rx="12" fill="rgba(247, 147, 26, 0.2)" stroke="rgba(247, 147, 26, 0.6)" stroke-width="1"/>
+  <text x="200" y="367" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#f7931a">BITCOIN ART</text>
+</svg>
