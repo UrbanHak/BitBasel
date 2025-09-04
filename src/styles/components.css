@@ -222,11 +222,14 @@
 }
 
 .ordinal-card:hover {
-  transform: translateY(-8px) scale(1.02);
+  transform: translateY(-12px) scale(1.03);
   box-shadow: 
-    0 25px 50px -12px rgba(0, 0, 0, 0.5),
-    0 0 0 1px var(--color-bitbasel-pink-light);
+    0 32px 64px -12px rgba(0, 0, 0, 0.6),
+    0 0 0 1px var(--color-bitbasel-pink-light),
+    0 0 32px rgba(255, 20, 147, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
   border-color: var(--color-bitbasel-pink);
+  filter: brightness(1.05) saturate(1.1);
 }
 
 .ordinal-card:hover::before {
@@ -307,11 +310,14 @@
 }
 
 .collection-card:hover {
-  transform: translateY(-8px) scale(1.02);
+  transform: translateY(-12px) scale(1.03);
   box-shadow: 
-    0 25px 50px -12px rgba(0, 0, 0, 0.5),
-    0 0 0 1px var(--color-bitbasel-pink-light);
+    0 32px 64px -12px rgba(0, 0, 0, 0.6),
+    0 0 0 1px var(--color-bitbasel-pink-light),
+    0 0 32px rgba(255, 20, 147, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
   border-color: var(--color-bitbasel-pink);
+  filter: brightness(1.05) saturate(1.1);
 }
 
 .collection-card:hover::before {
@@ -419,7 +425,7 @@
 .nav-logo {
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--color-bitbasel-pink);
+  color: var(--color-text-primary);
   text-decoration: none;
   transition: color 0.2s ease;
 }
@@ -507,13 +513,32 @@
 }
 
 .featured-section {
-  background: linear-gradient(180deg, transparent 0%, rgba(255, 20, 147, 0.02) 50%, transparent 100%);
-  border-top: 1px solid rgba(255, 20, 147, 0.1);
-  border-bottom: 1px solid rgba(255, 20, 147, 0.1);
+  background: 
+    linear-gradient(180deg, transparent 0%, rgba(255, 20, 147, 0.02) 50%, transparent 100%),
+    linear-gradient(45deg, transparent 49%, rgba(212, 175, 55, 0.05) 50%, transparent 51%);
+  border-top: 1px solid rgba(255, 20, 147, 0.15);
+  border-bottom: 1px solid rgba(255, 20, 147, 0.15);
+  position: relative;
+}
+
+.featured-section::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100px;
+  height: 2px;
+  background: var(--gradient-accent);
+  border-radius: 1px;
 }
 
 .newsletter-section {
-  background: radial-gradient(ellipse at center, rgba(255, 20, 147, 0.05) 0%, transparent 70%);
+  background: 
+    radial-gradient(ellipse at center, rgba(255, 20, 147, 0.08) 0%, transparent 70%),
+    linear-gradient(135deg, var(--color-background) 0%, rgba(10, 10, 10, 0.8) 100%);
+  border-top: 1px solid rgba(255, 20, 147, 0.2);
+  position: relative;
 }
 
 .section-header {
@@ -785,11 +810,35 @@
 /* Homepage Styles - Gallery Aesthetic */
 .hero {
   background: var(--color-background);
+  background-image: 
+    radial-gradient(circle at 20% 20%, var(--color-bitbasel-pink-light) 0%, transparent 40%),
+    radial-gradient(circle at 80% 80%, rgba(212, 175, 55, 0.1) 0%, transparent 40%);
   padding: 8rem 0;
   min-height: 70vh;
   display: flex;
   align-items: center;
   text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    135deg,
+    transparent 25%,
+    var(--color-bitbasel-pink-light) 25.5%,
+    var(--color-bitbasel-pink-light) 26%,
+    transparent 26.5%
+  );
+  background-size: 60px 60px;
+  opacity: 0.03;
+  pointer-events: none;
 }
 
 

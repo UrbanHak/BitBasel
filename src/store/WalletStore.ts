@@ -81,6 +81,9 @@ export class WalletStore {
         );
       }
 
+      // Fetch balance after connection
+      setTimeout(() => this.updateBalance(), 1000);
+
       return walletInfo;
     } catch (error) {
       runInAction(() => {
@@ -132,23 +135,94 @@ export class WalletStore {
   }
 
   private async connectXverse(): Promise<WalletInfo> {
-    // Placeholder - implement actual Xverse connection
-    throw new Error('Xverse wallet integration coming soon');
+    if (!(window as any).BitcoinProvider || !(window as any).StacksProvider) {
+      throw new Error('Xverse wallet not found. Please install the Xverse extension.');
+    }
+
+    const xverse = (window as any).BitcoinProvider;
+    const response = await xverse.connect();
+    
+    if (response.status === 'success') {
+      const addressResponse = await xverse.getAddresses();
+      const address = addressResponse.result.addresses[0];
+      
+      return {
+        address: address.address,
+        publicKey: address.publicKey || '',
+        balance: 0, // Will be fetched separately
+        network: 'mainnet',
+        connected: true,
+        provider: 'xverse',
+      };
+    }
+    
+    throw new Error('Failed to connect to Xverse wallet');
   }
 
   private async connectOrdinalsWallet(): Promise<WalletInfo> {
-    // Placeholder - implement actual Ordinals Wallet connection
-    throw new Error('Ordinals Wallet integration coming soon');
+    if (!(window as any).ordinalsWallet) {
+      throw new Error('Ordinals Wallet not found. Please install the Ordinals Wallet extension.');
+    }
+
+    const ordinalsWallet = (window as any).ordinalsWallet;
+    const accounts = await ordinalsWallet.requestAccounts();
+    const publicKey = await ordinalsWallet.getPublicKey();
+    const network = await ordinalsWallet.getNetwork();
+
+    return {
+      address: accounts[0],
+      publicKey,
+      balance: 0, // Will be fetched separately
+      network: network === 'livenet' ? 'mainnet' : 'testnet',
+      connected: true,
+      provider: 'ordinals-wallet',
+    };
   }
 
   private async connectLeather(): Promise<WalletInfo> {
-    // Placeholder - implement actual Leather wallet connection
-    throw new Error('Leather wallet integration coming soon');
+    if (!(window as any).LeatherProvider) {
+      throw new Error('Leather wallet not found. Please install the Leather extension.');
+    }
+
+    const leather = (window as any).LeatherProvider;
+    const response = await leather.request('getAddresses');
+    
+    if (response.result && response.result.addresses.length > 0) {
+      const address = response.result.addresses[0];
+      
+      return {
+        address: address.address,
+        publicKey: address.publicKey || '',
+        balance: 0, // Will be fetched separately
+        network: 'mainnet',
+        connected: true,
+        provider: 'leather',
+      };
+    }
+    
+    throw new Error('Failed to connect to Leather wallet');
   }
 
   private async connectPhantom(): Promise<WalletInfo> {
-    // Placeholder - implement actual Phantom wallet connection
-    throw new Error('Phantom wallet integration coming soon');
+    if (!(window as any).phantom?.bitcoin) {
+      throw new Error('Phantom Bitcoin not found. Please install Phantom with Bitcoin support.');
+    }
+
+    const phantom = (window as any).phantom.bitcoin;
+    const response = await phantom.connect();
+    
+    if (response.address) {
+      return {
+        address: response.address,
+        publicKey: response.publicKey || '',
+        balance: 0, // Will be fetched separately
+        network: 'mainnet',
+        connected: true,
+        provider: 'phantom',
+      };
+    }
+    
+    throw new Error('Failed to connect to Phantom wallet');
   }
 
   // Transaction methods
@@ -201,20 +275,41 @@ export class WalletStore {
     if (!this.walletInfo) return;
 
     try {
+      let newBalance = 0;
+      
       switch (this.walletInfo.provider) {
         case 'unisat':
           if ((window as any).unisat) {
             const balance = await (window as any).unisat.getBalance();
-            runInAction(() => {
-              if (this.walletInfo) {
-                this.walletInfo.balance = balance.confirmed;
-              }
-            });
+            newBalance = balance.confirmed;
           }
+          break;
+        case 'xverse':
+          if ((window as any).BitcoinProvider) {
+            const response = await (window as any).BitcoinProvider.getBalance();
+            newBalance = response.confirmed || 0;
+          }
+          break;
+        case 'ordinals-wallet':
+          if ((window as any).ordinalsWallet) {
+            const balance = await (window as any).ordinalsWallet.getBalance();
+            newBalance = balance.confirmed || balance.total || 0;
+          }
+          break;
+        case 'leather':
+        case 'phantom':
+          // These wallets may require different balance fetching approaches
+          // For now, keep existing balance
           break;
         default:
           break;
       }
+
+      runInAction(() => {
+        if (this.walletInfo && newBalance > 0) {
+          this.walletInfo.balance = newBalance;
+        }
+      });
     } catch (error) {
       console.error('Error updating balance:', error);
     }

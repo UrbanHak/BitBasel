@@ -25,8 +25,7 @@ const HomePage: React.FC = observer(() => {
         <section className="hero">
           <div className="container">
             <h1 className="hero-title">
-              BitBasel
-              <span className="hero-highlight">Your City's Crypto Art Community Hub</span>
+              <span className="hero-highlight">Your City's Crypto Art Community</span>
             </h1>
             <p className="hero-description">
               Phenomenal marketplace combining Bitcoin Ordinals with smart contracts & dynamic NFTs
